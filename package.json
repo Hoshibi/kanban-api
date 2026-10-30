@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
+    "module:create": "tsx scripts/create-module.ts",
     "postinstall": "prisma skills sync || exit 0",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
