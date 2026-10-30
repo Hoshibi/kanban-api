@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
 
@@ -9,16 +10,37 @@ import { errorHandler } from "./shared/middleware/errorHandler.ts";
 
 export const app = express();
 
-// Helmet - Headers de segurança (DEVE vir antes de outros middlewares)
+// Trust proxy (necessário para rate limit funcionar atrás de Docker/nginx/proxy)
+app.set("trust proxy", 1);
+
+// Helmet - Headers de segurança
 app.use(
   helmet({
-    // Swagger UI precisa destes desligados para funcionar
     contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false,
-    // HSTS só em produção (evita problemas em dev local)
     hsts: process.env.NODE_ENV === "production",
   })
 );
+
+// Rate Limit - Limita requisições por IP
+const createRateLimiter = (windowMs: number, max: number, message: string) =>
+  rateLimit({
+    windowMs,
+    max,
+    message: { error: { code: "RATE_LIMIT_EXCEEDED", message } },
+    standardHeaders: true,
+    legacyHeaders: false,
+    // Pula documentação
+    skip: (req) => req.path.startsWith("/api-docs"),
+  });
+
+// Limiter geral: 100 req / 15 min por IP
+app.use(
+  createRateLimiter(15 * 60 * 1000, 100, "Muitas requisições. Tente novamente em 15 minutos.")
+);
+
+// Limiter mais restrito para auth (descomente ao criar as rotas)
+// app.use("/auth", createRateLimiter(15 * 60 * 1000, 5, "Muitas tentativas. Tente novamente em 15 minutos."));
 
 app.use(
   cors({
