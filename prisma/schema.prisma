@@ -1,0 +1,28 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AdvisorRole {
+  advisor
+  senior_partner
+  admin
+}
+
+model Advisor {
+  id           Int           @id @default(autoincrement())
+  name         String        @db.VarChar(150)
+  email        String        @unique @db.VarChar(150)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  avatarUrl    String?       @map("avatar_url") @db.VarChar(255)
+  role         AdvisorRole   @default(advisor)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("advisors")
+}
