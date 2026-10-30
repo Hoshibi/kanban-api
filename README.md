@@ -19,19 +19,19 @@ This API serves as the backend for the **Kanban Assessor** system, designed to:
 
 ## 🛠 Tech Stack
 
-| Category          | Technology                          | Version |
-|-------------------|-------------------------------------|---------|
-| **Runtime**       | Node.js                             | 22+ (ESM) |
-| **Language**      | TypeScript                          | 7.x     |
-| **Framework**     | Express                             | 5.x     |
-| **API Docs**      | swagger-jsdoc + swagger-ui-express  | Latest  |
-| **ORM**           | Prisma Client / Prisma Migrate      | 7.x     |
-| **DB Adapter**    | @prisma/adapter-pg (native driver)  | 7.x     |
-| **Database**      | PostgreSQL                          | 17 (Docker) |
-| **Package Manager**| pnpm                               | 12.x    |
-| **Dev Tooling**   | tsx (watch), tsc (build)            | Latest  |
-| **Env Management**| dotenv                              | 18.x    |
-| **Validation**    | Zod-ready (extensible)              | —       |
+| Category            | Technology                         | Version     |
+| ------------------- | ---------------------------------- | ----------- |
+| **Runtime**         | Node.js                            | 22+ (ESM)   |
+| **Language**        | TypeScript                         | 7.x         |
+| **Framework**       | Express                            | 5.x         |
+| **API Docs**        | swagger-jsdoc + swagger-ui-express | Latest      |
+| **ORM**             | Prisma Client / Prisma Migrate     | 7.x         |
+| **DB Adapter**      | @prisma/adapter-pg (native driver) | 7.x         |
+| **Database**        | PostgreSQL                         | 17 (Docker) |
+| **Package Manager** | pnpm                               | 12.x        |
+| **Dev Tooling**     | tsx (watch), tsc (build)           | Latest      |
+| **Env Management**  | dotenv                             | 18.x        |
+| **Validation**      | Zod-ready (extensible)             | —           |
 
 ---
 
@@ -139,21 +139,21 @@ Swagger UI: **http://localhost:3333/api-docs**
 
 ## 📦 Available Commands
 
-| Command                  | Description                                              |
-|--------------------------|----------------------------------------------------------|
-| `pnpm dev`               | Start dev server with file watching (`tsx watch src/server.ts`) |
-| `pnpm build`             | Compile TypeScript → `dist/` (`tsc`)                     |
-| `pnpm start`             | Run production build (`node dist/server.js`)             |
-| `pnpm test`              | Placeholder (no test runner configured yet)              |
-| `pnpm prisma studio`     | Open Prisma Studio (visual DB editor)                    |
-| `pnpm prisma migrate dev`| Create & apply a new migration                           |
-| `pnpm prisma migrate deploy` | Apply pending migrations (prod/CI)                |
-| `pnpm prisma generate`   | Regenerate Prisma Client                                 |
-| `pnpm prisma db push`    | Push schema changes without migration (dev only)         |
-| `pnpm prisma db seed`    | Run seed script (if defined in `package.json`)           |
-| `docker compose up -d`   | Start PostgreSQL container                               |
-| `docker compose down`    | Stop & remove containers (keeps volume)                  |
-| `docker compose down -v` | Stop & remove containers **and** volume (full reset)     |
+| Command                      | Description                                                     |
+| ---------------------------- | --------------------------------------------------------------- |
+| `pnpm dev`                   | Start dev server with file watching (`tsx watch src/server.ts`) |
+| `pnpm build`                 | Compile TypeScript → `dist/` (`tsc`)                            |
+| `pnpm start`                 | Run production build (`node dist/server.js`)                    |
+| `pnpm test`                  | Placeholder (no test runner configured yet)                     |
+| `pnpm prisma studio`         | Open Prisma Studio (visual DB editor)                           |
+| `pnpm prisma migrate dev`    | Create & apply a new migration                                  |
+| `pnpm prisma migrate deploy` | Apply pending migrations (prod/CI)                              |
+| `pnpm prisma generate`       | Regenerate Prisma Client                                        |
+| `pnpm prisma db push`        | Push schema changes without migration (dev only)                |
+| `pnpm prisma db seed`        | Run seed script (if defined in `package.json`)                  |
+| `docker compose up -d`       | Start PostgreSQL container                                      |
+| `docker compose down`        | Stop & remove containers (keeps volume)                         |
+| `docker compose down -v`     | Stop & remove containers **and** volume (full reset)            |
 
 ---
 
@@ -189,11 +189,11 @@ enum AdvisorRole {
 
 ## 🔌 API Endpoints
 
-| Method | Path         | Description                              |
-|--------|--------------|------------------------------------------|
-| `GET`  | `/health`    | Health check → `{ status: "ok" }`        |
-| `GET`  | `/`          | Welcome message                          |
-| `GET`  | `/api-docs`  | **Swagger UI** — Interactive API docs    |
+| Method | Path        | Description                           |
+| ------ | ----------- | ------------------------------------- |
+| `GET`  | `/health`   | Health check → `{ status: "ok" }`     |
+| `GET`  | `/`         | Welcome message                       |
+| `GET`  | `/api-docs` | **Swagger UI** — Interactive API docs |
 
 > **Planned:** Auth (`POST /auth/login`, `POST /auth/register`), Advisors CRUD, Boards, Cards, Columns, Activities.
 
@@ -242,7 +242,7 @@ services:
       POSTGRES_PASSWORD: kanban_dev
       POSTGRES_DB: kanban_db
     ports:
-      - "127.0.0.1:5432:5432"   # Only localhost for security
+      - "127.0.0.1:5432:5432" # Only localhost for security
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -263,13 +263,13 @@ volumes:
 
 ## 🔐 Environment Variables Reference
 
-| Variable         | Required | Default        | Description                        |
-|------------------|----------|----------------|------------------------------------|
-| `DATABASE_URL`   | ✅       | —              | PostgreSQL connection string       |
-| `PORT`           | ❌       | `3333`         | HTTP server port                   |
-| `NODE_ENV`       | ❌       | `development`  | Runtime environment                |
-| `JWT_SECRET`     | 🔜       | —              | For token signing (planned)        |
-| `CORS_ORIGIN`    | 🔜       | `*`            | Allowed frontend origin (planned)  |
+| Variable       | Required | Default       | Description                       |
+| -------------- | -------- | ------------- | --------------------------------- |
+| `DATABASE_URL` | ✅       | —             | PostgreSQL connection string      |
+| `PORT`         | ❌       | `3333`        | HTTP server port                  |
+| `NODE_ENV`     | ❌       | `development` | Runtime environment               |
+| `JWT_SECRET`   | 🔜       | —             | For token signing (planned)       |
+| `CORS_ORIGIN`  | 🔜       | `*`           | Allowed frontend origin (planned) |
 
 ---
 
@@ -333,4 +333,4 @@ pnpm prisma generate --output=../../packages/shared/prisma
 
 ---
 
-> Generated with ❤️ using **Claude Code** — *`pnpm dev` and start building!*
+> Generated with ❤️ using **Claude Code** — _`pnpm dev` and start building!_

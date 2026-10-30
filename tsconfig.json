@@ -5,6 +5,14 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
+    // Path aliases (com NodeNext usa caminhos relativos ./)
+    "paths": {
+      "@/*": ["./src/*"],
+      "@config/*": ["./src/config/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@modules/*": ["./src/modules/*"]
+    },
+
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "NodeNext",
