@@ -31,7 +31,13 @@ This API serves as the backend for the **Kanban Assessor** system, designed to:
 | **Package Manager** | pnpm                               | 12.x        |
 | **Dev Tooling**     | tsx (watch), tsc (build)           | Latest      |
 | **Env Management**  | dotenv                             | 18.x        |
-| **Validation**      | Zod-ready (extensible)             | —           |
+| **Validation**      | Zod                                | 4.x         |
+| **Linting/Format**  | Biome                              | 2.x         |
+| **Git Hooks**       | Husky + lint-staged                | Latest      |
+| **Testing**         | Vitest + @vitest/coverage-v8       | 5.x         |
+| **Security**        | Helmet                             | 8.x         |
+| **Rate Limiting**   | express-rate-limit                 | 8.x         |
+| **Logging**         | Pino + pino-http + pino-pretty     | 10/11/13.x  |
 
 ---
 
@@ -46,20 +52,28 @@ kanban-api/
 │   ├── server.ts              # Entry point: starts HTTP server (port 3333)
 │   ├── app.ts                 # Express app factory + middleware + Swagger UI
 │   ├── config/
+│   │   ├── env.ts             # Zod-validated environment config
+│   │   ├── logger.ts          # Pino logger factory (dev pretty / prod JSON)
 │   │   ├── prisma.ts          # PrismaClient singleton with Pg adapter
 │   │   └── swagger.ts         # OpenAPI 3.0.3 spec (swagger-jsdoc)
+│   ├── shared/
+│   │   └── middleware/
+│   │       ├── errorHandler.ts  # Centralized error handling
+│   │       └── requestLogger.ts # Pino HTTP request logging
 │   ├── modules/               # Feature modules (routes, controllers, services)
 │   │   └── **/*.routes.ts     # Route files picked up by swagger-jsdoc
 │   └── generated/
 │       └── prisma/            # Prisma Client (generated, do not edit)
 ├── .env                       # Local environment variables (gitignored)
 ├── .gitignore
+├── biome.json                 # Biome lint/format config
 ├── compose.yaml               # Docker Compose for Postgres
 ├── package.json
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 ├── prisma.config.ts           # Prisma CLI config (ESM)
-└── tsconfig.json              # Strict TypeScript config
+├── tsconfig.json              # Strict TypeScript config
+└── vitest.config.ts           # Vitest config with coverage
 ```
 
 ---
@@ -100,6 +114,9 @@ DATABASE_URL="postgresql://kanban:kanban_dev@localhost:5432/kanban_db?schema=pub
 # Server
 PORT=3333
 NODE_ENV=development
+
+# CORS - explicit origins for dev with credentials (cookies/JWT)
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
 ```
 
 ### 3. Start PostgreSQL (Docker)
@@ -116,11 +133,11 @@ docker compose ps
 ### 4. Run Migrations & Generate Client
 
 ```bash
+# Generate Prisma Client
+pnpm prisma generate
+
 # Apply migrations to DB
 pnpm prisma migrate dev --name init
-
-# (Re)generate Prisma Client after schema changes
-pnpm prisma generate
 ```
 
 > **Note:** `postinstall` hook runs `prisma skills sync` automatically after `pnpm install`.
@@ -144,7 +161,14 @@ Swagger UI: **http://localhost:3333/api-docs**
 | `pnpm dev`                   | Start dev server with file watching (`tsx watch src/server.ts`) |
 | `pnpm build`                 | Compile TypeScript → `dist/` (`tsc`)                            |
 | `pnpm start`                 | Run production build (`node dist/server.js`)                    |
-| `pnpm test`                  | Placeholder (no test runner configured yet)                     |
+| `pnpm test`                  | Run tests with Vitest                                           |
+| `pnpm test:watch`            | Run tests in watch mode                                         |
+| `pnpm test:coverage`         | Run tests with coverage report                                  |
+| `pnpm test:ui`               | Open Vitest UI                                                  |
+| `pnpm lint`                  | Run Biome linter                                                |
+| `pnpm lint:fix`              | Run Biome linter with auto-fix                                  |
+| `pnpm format`                | Format code with Biome                                          |
+| `pnpm typecheck`             | TypeScript type checking (no emit)                              |
 | `pnpm prisma studio`         | Open Prisma Studio (visual DB editor)                           |
 | `pnpm prisma migrate dev`    | Create & apply a new migration                                  |
 | `pnpm prisma migrate deploy` | Apply pending migrations (prod/CI)                              |
@@ -189,11 +213,9 @@ enum AdvisorRole {
 
 ## 🔌 API Endpoints
 
-| Method | Path        | Description                           |
-| ------ | ----------- | ------------------------------------- |
-| `GET`  | `/health`   | Health check → `{ status: "ok" }`     |
-| `GET`  | `/`         | Welcome message                       |
-| `GET`  | `/api-docs` | **Swagger UI** — Interactive API docs |
+| Method | Path        | Description                           | Status         |
+| ------ | ----------- | ------------------------------------- | -------------- |
+| `GET`  | `/api-docs` | **Swagger UI** — Interactive API docs | ✅ Implemented |
 
 > **Planned:** Auth (`POST /auth/login`, `POST /auth/register`), Advisors CRUD, Boards, Cards, Columns, Activities.
 
@@ -224,8 +246,10 @@ enum AdvisorRole {
 
 - **Strict TypeScript** (`strict: true`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`)
 - **ESM only** (`"type": "module"` in `package.json`, `.ts` imports with extensions)
-- **Path aliases** via `tsconfig.json` (`@/*` → `src/*`)
-- **No linting/formatter configured yet** — consider adding Biome or ESLint + Prettier
+- **Path aliases** via `tsconfig.json` (`@/*`, `@config/*`, `@shared/*`, `@modules/*`)
+- **Biome** for linting & formatting (`pnpm lint`, `pnpm format`)
+- **Husky + lint-staged** on pre-commit (auto-fix + stage)
+- **Vitest** for unit/integration tests (`pnpm test`)
 
 ---
 
@@ -263,13 +287,16 @@ volumes:
 
 ## 🔐 Environment Variables Reference
 
-| Variable       | Required | Default       | Description                       |
-| -------------- | -------- | ------------- | --------------------------------- |
-| `DATABASE_URL` | ✅       | —             | PostgreSQL connection string      |
-| `PORT`         | ❌       | `3333`        | HTTP server port                  |
-| `NODE_ENV`     | ❌       | `development` | Runtime environment               |
-| `JWT_SECRET`   | 🔜       | —             | For token signing (planned)       |
-| `CORS_ORIGIN`  | 🔜       | `*`           | Allowed frontend origin (planned) |
+| Variable       | Required | Default                          | Description                                 |
+| -------------- | -------- | -------------------------------- | ------------------------------------------- |
+| `DATABASE_URL` | ✅       | —                                | PostgreSQL connection string                |
+| `PORT`         | ❌       | `3333`                           | HTTP server port                            |
+| `NODE_ENV`     | ❌       | `development`                    | Runtime environment                         |
+| `LOG_LEVEL`    | ❌       | `info` (`dev`) / `info` (`prod`) | Pino log level                              |
+| `CORS_ORIGIN`  | ❌       | `*`                              | Allowed frontend origins (comma-separated)  |
+| `JWT_SECRET`   | 🔜       | —                                | For token signing (planned for Auth module) |
+
+> **CORS behavior**: if `CORS_ORIGIN="*"` → `origin: "*"`, `credentials: false` (dev only). If explicit origins → `origin: [...]`, `credentials: true` (dev with auth / prod).
 
 ---
 
@@ -299,15 +326,36 @@ pnpm prisma generate --output=../../packages/shared/prisma
 
 ## 🧭 Roadmap / TODO
 
+### ✅ Infrastructure (Done)
+
+- [x] Biome (lint/format)
+- [x] Husky + lint-staged (pre-commit hooks)
+- [x] Vitest + coverage (@vitest/coverage-v8)
+- [x] Helmet (security headers, CSP/COEP off for Swagger)
+- [x] express-rate-limit (trust proxy for Docker)
+- [x] Pino structured logging (pino-pretty dev / JSON prod)
+- [x] Smart CORS (wildcard dev / explicit prod with credentials)
+- [x] tsconfig paths (`@/*`, `@config/*`, `@shared/*`, `@modules/*`)
+- [x] Swagger UI at `/api-docs`
+- [x] Prisma schema (Advisor + roles) + pg adapter
+- [x] Centralized error handler (AppError, Zod, Prisma errors)
+- [x] Request logger ignoring `/api-docs/*`
+
+### 🔜 Next Up (Core Features)
+
+- [ ] **Prisma**: `pnpm prisma generate` + `pnpm prisma migrate dev --name init`
 - [ ] **Authentication**: JWT login/register, password hashing (bcrypt/argon2)
 - [ ] **Authorization**: Role guards (advisor / senior_partner / admin)
 - [ ] **Advisors CRUD**: Full REST endpoints with validation (Zod)
 - [ ] **Kanban Core**: Boards, Columns, Cards, Labels, Comments
 - [ ] **Activity Log**: Audit trail for card movements
+
+### 📦 Future
+
 - [ ] **Tests**: Unit (Vitest) + Integration (Supertest + Testcontainers)
 - [ ] **API Docs**: Enhance Swagger with examples, auth schemes, error responses
 - [ ] **CI/CD**: GitHub Actions (lint, typecheck, test, build, deploy)
-- [ ] **Observability**: Structured logging (pino), metrics (Prometheus), tracing
+- [ ] **Observability**: Metrics (Prometheus), tracing
 
 ---
 
