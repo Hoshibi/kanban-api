@@ -7,6 +7,7 @@ import swaggerUi from "swagger-ui-express";
 import { corsOrigins } from "./config/env.ts";
 import { swaggerSpec } from "./config/swagger.ts";
 import { errorHandler } from "./shared/middleware/errorHandler.ts";
+import { requestLogger } from "./shared/middleware/requestLogger.ts";
 
 export const app = express();
 
@@ -42,10 +43,15 @@ app.use(
 // Limiter mais restrito para auth (descomente ao criar as rotas)
 // app.use("/auth", createRateLimiter(15 * 60 * 1000, 5, "Muitas tentativas. Tente novamente em 15 minutos."));
 
+// Request Logger - Loga requisições HTTP (Pino)
+app.use(requestLogger);
+
+// CORS inteligente: dev = "*", sem credentials | prod = origins explícitos, com credentials
+const isWildcard = corsOrigins.includes("*");
 app.use(
   cors({
-    origin: corsOrigins,
-    credentials: true,
+    origin: isWildcard ? "*" : corsOrigins,
+    credentials: !isWildcard,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })

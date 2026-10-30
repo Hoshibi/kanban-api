@@ -1,5 +1,9 @@
 // vitest.setup.ts - Configuração global de testes
 import { beforeAll, afterAll, vi } from "vitest";
+import { logger } from "./src/config/logger.ts";
+
+// Silencia logs do Pino durante testes
+logger.level = "silent";
 
 // Mock de console para reduzir ruído nos testes (opcional)
 const originalConsoleError = console.error;
