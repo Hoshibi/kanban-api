@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Advisor: 'Advisor'
+  Advisor: 'Advisor',
+  RefreshToken: 'RefreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,6 +82,21 @@ export const AdvisorScalarFieldEnum = {
 } as const
 
 export type AdvisorScalarFieldEnum = (typeof AdvisorScalarFieldEnum)[keyof typeof AdvisorScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  advisorId: 'advisorId',
+  userAgent: 'userAgent',
+  ip: 'ip',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt',
+  replacedByTokenHash: 'replacedByTokenHash'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const SortOrder = {

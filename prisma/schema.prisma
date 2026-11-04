@@ -23,6 +23,25 @@ model Advisor {
   avatarUrl    String?       @map("avatar_url") @db.VarChar(255)
   role         AdvisorRole   @default(advisor)
   createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  refreshTokens RefreshToken[]
 
   @@map("advisors")
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique @map("token_hash") @db.VarChar(255)
+  advisorId Int      @map("advisor_id")
+  userAgent String?  @map("user_agent") @db.VarChar(500)
+  ip        String?  @db.VarChar(45)
+  expiresAt DateTime @map("expires_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamp(6)
+  replacedByTokenHash String? @map("replaced_by_token_hash") @db.VarChar(255)
+
+  advisor Advisor @relation(fields: [advisorId], references: [id], onDelete: Cascade)
+
+  @@index([advisorId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
 }

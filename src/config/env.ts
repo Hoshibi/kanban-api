@@ -1,4 +1,4 @@
-// src/config/env.ts (NOVO ARQUIVO)
+// src/config/env.ts
 import { z } from "zod";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -55,3 +55,10 @@ if (!parsed.success) {
 export const env = parsed.data;
 export const corsOrigins = env.CORS_ORIGIN.split(",").map((s) => s.trim());
 export type Env = z.infer<typeof envSchema>;
+
+/** Converte "7d" → 7, "30d" → 30, etc. Fallback 7. */
+export function parseExpiryDays(expiresIn: string | undefined): number {
+  if (!expiresIn) return 7;
+  const match = expiresIn.match(/^(\d+)d$/);
+  return match ? parseInt(match[1] as string, 10) : 7;
+}

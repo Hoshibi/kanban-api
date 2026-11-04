@@ -232,6 +232,7 @@ export type AdvisorWhereInput = {
   avatarUrl?: Prisma.StringNullableFilter<"Advisor"> | string | null
   role?: Prisma.EnumAdvisorRoleFilter<"Advisor"> | $Enums.AdvisorRole
   createdAt?: Prisma.DateTimeFilter<"Advisor"> | Date | string
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
 }
 
 export type AdvisorOrderByWithRelationInput = {
@@ -242,6 +243,7 @@ export type AdvisorOrderByWithRelationInput = {
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
 }
 
 export type AdvisorWhereUniqueInput = Prisma.AtLeast<{
@@ -255,6 +257,7 @@ export type AdvisorWhereUniqueInput = Prisma.AtLeast<{
   avatarUrl?: Prisma.StringNullableFilter<"Advisor"> | string | null
   role?: Prisma.EnumAdvisorRoleFilter<"Advisor"> | $Enums.AdvisorRole
   createdAt?: Prisma.DateTimeFilter<"Advisor"> | Date | string
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
 }, "id" | "email">
 
 export type AdvisorOrderByWithAggregationInput = {
@@ -292,6 +295,7 @@ export type AdvisorCreateInput = {
   avatarUrl?: string | null
   role?: $Enums.AdvisorRole
   createdAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutAdvisorInput
 }
 
 export type AdvisorUncheckedCreateInput = {
@@ -302,6 +306,7 @@ export type AdvisorUncheckedCreateInput = {
   avatarUrl?: string | null
   role?: $Enums.AdvisorRole
   createdAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutAdvisorInput
 }
 
 export type AdvisorUpdateInput = {
@@ -311,6 +316,7 @@ export type AdvisorUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumAdvisorRoleFieldUpdateOperationsInput | $Enums.AdvisorRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutAdvisorNestedInput
 }
 
 export type AdvisorUncheckedUpdateInput = {
@@ -321,6 +327,7 @@ export type AdvisorUncheckedUpdateInput = {
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumAdvisorRoleFieldUpdateOperationsInput | $Enums.AdvisorRole
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutAdvisorNestedInput
 }
 
 export type AdvisorCreateManyInput = {
@@ -390,6 +397,11 @@ export type AdvisorSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type AdvisorScalarRelationFilter = {
+  is?: Prisma.AdvisorWhereInput
+  isNot?: Prisma.AdvisorWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -414,6 +426,103 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type AdvisorCreateNestedOneWithoutRefreshTokensInput = {
+  create?: Prisma.XOR<Prisma.AdvisorCreateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.AdvisorCreateOrConnectWithoutRefreshTokensInput
+  connect?: Prisma.AdvisorWhereUniqueInput
+}
+
+export type AdvisorUpdateOneRequiredWithoutRefreshTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.AdvisorCreateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.AdvisorCreateOrConnectWithoutRefreshTokensInput
+  upsert?: Prisma.AdvisorUpsertWithoutRefreshTokensInput
+  connect?: Prisma.AdvisorWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdvisorUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.AdvisorUpdateWithoutRefreshTokensInput>, Prisma.AdvisorUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type AdvisorCreateWithoutRefreshTokensInput = {
+  name: string
+  email: string
+  passwordHash: string
+  avatarUrl?: string | null
+  role?: $Enums.AdvisorRole
+  createdAt?: Date | string
+}
+
+export type AdvisorUncheckedCreateWithoutRefreshTokensInput = {
+  id?: number
+  name: string
+  email: string
+  passwordHash: string
+  avatarUrl?: string | null
+  role?: $Enums.AdvisorRole
+  createdAt?: Date | string
+}
+
+export type AdvisorCreateOrConnectWithoutRefreshTokensInput = {
+  where: Prisma.AdvisorWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdvisorCreateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedCreateWithoutRefreshTokensInput>
+}
+
+export type AdvisorUpsertWithoutRefreshTokensInput = {
+  update: Prisma.XOR<Prisma.AdvisorUpdateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedUpdateWithoutRefreshTokensInput>
+  create: Prisma.XOR<Prisma.AdvisorCreateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedCreateWithoutRefreshTokensInput>
+  where?: Prisma.AdvisorWhereInput
+}
+
+export type AdvisorUpdateToOneWithWhereWithoutRefreshTokensInput = {
+  where?: Prisma.AdvisorWhereInput
+  data: Prisma.XOR<Prisma.AdvisorUpdateWithoutRefreshTokensInput, Prisma.AdvisorUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type AdvisorUpdateWithoutRefreshTokensInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdvisorRoleFieldUpdateOperationsInput | $Enums.AdvisorRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AdvisorUncheckedUpdateWithoutRefreshTokensInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdvisorRoleFieldUpdateOperationsInput | $Enums.AdvisorRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type AdvisorCountOutputType
+ */
+
+export type AdvisorCountOutputType = {
+  refreshTokens: number
+}
+
+export type AdvisorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  refreshTokens?: boolean | AdvisorCountOutputTypeCountRefreshTokensArgs
+}
+
+/**
+ * AdvisorCountOutputType without action
+ */
+export type AdvisorCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdvisorCountOutputType
+   */
+  select?: Prisma.AdvisorCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AdvisorCountOutputType without action
+ */
+export type AdvisorCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefreshTokenWhereInput
+}
 
 
 export type AdvisorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -424,6 +533,8 @@ export type AdvisorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   avatarUrl?: boolean
   role?: boolean
   createdAt?: boolean
+  refreshTokens?: boolean | Prisma.Advisor$refreshTokensArgs<ExtArgs>
+  _count?: boolean | Prisma.AdvisorCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["advisor"]>
 
 export type AdvisorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -457,10 +568,18 @@ export type AdvisorSelectScalar = {
 }
 
 export type AdvisorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "passwordHash" | "avatarUrl" | "role" | "createdAt", ExtArgs["result"]["advisor"]>
+export type AdvisorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  refreshTokens?: boolean | Prisma.Advisor$refreshTokensArgs<ExtArgs>
+  _count?: boolean | Prisma.AdvisorCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type AdvisorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type AdvisorIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $AdvisorPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Advisor"
-  objects: {}
+  objects: {
+    refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -863,6 +982,7 @@ readonly fields: AdvisorFieldRefs;
  */
 export interface Prisma__AdvisorClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  refreshTokens<T extends Prisma.Advisor$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Advisor$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -916,6 +1036,10 @@ export type AdvisorFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * Filter, which Advisor to fetch.
    */
   where: Prisma.AdvisorWhereUniqueInput
@@ -934,6 +1058,10 @@ export type AdvisorFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * Filter, which Advisor to fetch.
    */
   where: Prisma.AdvisorWhereUniqueInput
@@ -951,6 +1079,10 @@ export type AdvisorFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the Advisor
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
   /**
    * Filter, which Advisor to fetch.
    */
@@ -1000,6 +1132,10 @@ export type AdvisorFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * Filter, which Advisor to fetch.
    */
   where?: Prisma.AdvisorWhereInput
@@ -1047,6 +1183,10 @@ export type AdvisorFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the Advisor
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
   /**
    * Filter, which Advisors to fetch.
    */
@@ -1096,6 +1236,10 @@ export type AdvisorCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * The data needed to create a Advisor.
    */
   data: Prisma.XOR<Prisma.AdvisorCreateInput, Prisma.AdvisorUncheckedCreateInput>
@@ -1143,6 +1287,10 @@ export type AdvisorUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Advisor
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
   /**
    * The data needed to update a Advisor.
    */
@@ -1210,6 +1358,10 @@ export type AdvisorUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * The filter to search for the Advisor to update in case it exists.
    */
   where: Prisma.AdvisorWhereUniqueInput
@@ -1236,6 +1388,10 @@ export type AdvisorDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
+  /**
    * Filter which Advisor to delete.
    */
   where: Prisma.AdvisorWhereUniqueInput
@@ -1256,6 +1412,30 @@ export type AdvisorDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
+ * Advisor.refreshTokens
+ */
+export type Advisor$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RefreshToken
+   */
+  select?: Prisma.RefreshTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RefreshToken
+   */
+  omit?: Prisma.RefreshTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RefreshTokenInclude<ExtArgs> | null
+  where?: Prisma.RefreshTokenWhereInput
+  orderBy?: Prisma.RefreshTokenOrderByWithRelationInput | Prisma.RefreshTokenOrderByWithRelationInput[]
+  cursor?: Prisma.RefreshTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+}
+
+/**
  * Advisor without action
  */
 export type AdvisorDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1267,4 +1447,8 @@ export type AdvisorDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Advisor
    */
   omit?: Prisma.AdvisorOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdvisorInclude<ExtArgs> | null
 }

@@ -46,3 +46,8 @@ export { Prisma }
  * 
  */
 export type Advisor = Prisma.AdvisorModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
