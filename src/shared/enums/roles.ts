@@ -1,5 +1,6 @@
 // src/shared/enums/roles.ts
-import z from "zod";
+
+import { z } from "@/config/openapi.js";
 
 export const AdvisorRole = {
   ADVISOR: "advisor" as const,

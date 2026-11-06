@@ -1,11 +1,9 @@
 // src/config/rateLimit.ts
 
-import type { Request, RequestHandler } from "express";
-import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import rateLimit, { ipKeyGenerator, type Options } from "express-rate-limit";
 import { AppError } from "../shared/errors/AppError.ts";
 import { env } from "./env.ts";
-
-const DEFAULT_SKIP_PATHS = ["/api-docs"];
 
 interface RateLimiterOptions {
   windowMs?: number;
@@ -15,41 +13,62 @@ interface RateLimiterOptions {
   keyGenerator?: (req: Request) => string;
 }
 
-// Cria rate limiter (com defaults do env + presets seguros)
+// Cria rate limiter
 export function createRateLimiter(options: RateLimiterOptions = {}): RequestHandler {
   const {
     windowMs = env.RATE_LIMIT_WINDOW_MS,
     max = env.RATE_LIMIT_MAX,
     message: defaultMessage = "Muitas requisições. Tente novamente mais tarde.",
-    skipPaths = DEFAULT_SKIP_PATHS,
-    keyGenerator = (req) => ipKeyGenerator(req.ip ?? "unknown"),
+    skipPaths = [],
+    keyGenerator,
   } = options;
 
-  const skip = (req: Request) => skipPaths.some((path) => req.path.startsWith(path));
+  const skip = (req: Request) =>
+    skipPaths.some((path: string) => req.path === path || req.path.startsWith(`${path}/`));
 
-  return rateLimit({
+  // Se keyGenerator não fornecido, a lib usa o default (IP-based com suporte IPv6)
+  const rateLimitOptions: Partial<Options> = {
     windowMs,
     max,
-    keyGenerator,
     skip,
     standardHeaders: true,
     legacyHeaders: false,
-    handler: (_req, _res, _next, opts) => {
-      throw AppError.tooManyRequests(opts.message ?? defaultMessage);
+    handler: (_req: Request, _res: Response, next: NextFunction) => {
+      next(AppError.tooManyRequests(defaultMessage));
     },
-  });
+  };
+
+  if (keyGenerator) {
+    rateLimitOptions.keyGenerator = keyGenerator;
+  }
+
+  return rateLimit(rateLimitOptions);
 }
 
 // Presets prontos (usar diretamente nos middlewares)
 export const rateLimiters = {
-  // Geral: usa env (default 100 req / 60s)
+  // Geral: usa env (default 100 req / 60s) - usa keyGenerator default da lib
   global: createRateLimiter(),
 
-  // Auth: 10 req / 15 min (brute-force protection)
-  auth: createRateLimiter({
+  // Login: 10 req / 15 min (brute-force protection) - usa keyGenerator default da lib
+  login: createRateLimiter({
     windowMs: 15 * 60 * 1000,
     max: 10,
-    message: "Muitas tentativas de autenticação. Tente novamente em 15 minutos.",
+    message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
+  }),
+
+  // Register: 20 req / 15 min (cadastro, mais permissivo que login)
+  register: createRateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: "Muitas tentativas de cadastro. Tente novamente em 15 minutos.",
+  }),
+
+  // Refresh: 30 req / 15 min (rotação de token, mais permissivo)
+  refresh: createRateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: "Muitas tentativas de renovação de token. Tente novamente em 15 minutos.",
   }),
 
   // Sensível: 3 req / hora (reset senha, 2FA, etc)
@@ -64,7 +83,7 @@ export const rateLimiters = {
     windowMs: 60 * 1000,
     max: 60,
     keyGenerator: (req) => {
-      const userId = (req.user as { sub: string } | undefined)?.sub;
+      const userId = req.user?.sub;
       return userId ? `user:${userId}` : ipKeyGenerator(req.ip ?? "unknown");
     },
   }),

@@ -1,4 +1,8 @@
 import { defineConfig } from "vitest/config";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Define test env vars BEFORE importing app (which imports env.ts)
 process.env.NODE_ENV = "test";
@@ -7,6 +11,14 @@ process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test_db?schema
 process.env.CORS_ORIGIN = "*";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@config": path.resolve(__dirname, "./src/config"),
+      "@shared": path.resolve(__dirname, "./src/shared"),
+      "@modules": path.resolve(__dirname, "./src/modules"),
+    },
+  },
   test: {
     environment: "node",
     include: ["src/**/*.test.ts", "src/**/*.spec.ts"],

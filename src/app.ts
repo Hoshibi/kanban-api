@@ -15,10 +15,6 @@ import { requestLogger } from "./shared/middleware/requestLogger.ts";
 
 export const app = express();
 
-// ── Trust proxy ──────────────────────────────────────────────────────────────────
-// 1 = número de hops conhecidos (não use true que aceita qualquer X-Forwarded-For)
-app.set("trust proxy", 1);
-
 // ── Helmet - Headers de segurança ────────────────────────────────────────────────
 app.use(
   helmet({
@@ -29,30 +25,25 @@ app.use(
   })
 );
 
-// ── Compression ──────────────────────────────────────────────────────────────────
-// Reduz payload JSON (gzip/br). Antes do rate limit para não comprimir erro 429
-app.use(compression());
-
-// ── Rate Limit global ────────────────────────────────────────────────────────────
-// Em testes pula rate limit para não flakear
-if (process.env.NODE_ENV !== "test") {
-  app.use(rateLimiters.global);
-}
-
 // ── Request Logger ───────────────────────────────────────────────────────────────
+// Registra inclusive tentativas bloqueadas pelo rate limiter
 app.use(requestLogger);
 
-// ── CORS inteligente ─────────────────────────────────────────────────────────────
-// dev: origin="*" (sem credentials) | prod: origins explícitos + credentials
-const isWildcard = corsOrigins.includes("*");
+// ── CORS ─────────────────────────────────────────────────────────────────────────
+// Origens explícitas + credentials:true para permitir cookies HttpOnly
+// Configure CORS_ORIGINS no .env (ex: "http://localhost:5173,https://app.exemplo.com")
 app.use(
   cors({
-    origin: isWildcard ? "*" : corsOrigins,
-    credentials: !isWildcard,
+    origin: corsOrigins,
+    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
+
+// ── Compression ──────────────────────────────────────────────────────────────────
+// Reduz payload JSON (gzip/br). Depois do CORS para não afetar headers de erro
+app.use(compression());
 
 // ── Cookie parser ────────────────────────────────────────────────────────────────
 // Necessário para ler refresh token do cookie HttpOnly
@@ -62,13 +53,20 @@ app.use(cookieParser());
 // 100kb evita DoS via payload grande; ajuste se fizer upload de arquivos
 app.use(express.json({ limit: "100kb" }));
 
+// ── Swagger UI (docs da API) ─────────────────────────────────────────────────────
+// Antes do rate limiter global para não contar nas métricas
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// ── Rate Limit global ────────────────────────────────────────────────────────────
+// Em testes pula rate limit para não flakear
+if (process.env.NODE_ENV !== "test") {
+  app.use(rateLimiters.global);
+}
+
 // ── Health check (load balancer / k8s / uptime monitor) ──────────────────────────
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
-
-// ── Swagger UI (docs da API) ─────────────────────────────────────────────────────
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ── Rotas ────────────────────────────────────────────────────────────────────────
 app.use("/auth", authRoutes);

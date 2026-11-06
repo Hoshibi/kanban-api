@@ -1,21 +1,14 @@
-import swaggerJsdoc from "swagger-jsdoc";
+// src/config/swagger.ts
 
-const options: swaggerJsdoc.Options = {
-  definition: {
-    openapi: "3.0.3",
-    info: {
-      title: "Kanban Assessor API",
-      version: "1.0.0",
-      description: "Documentação da API do Kanban Assessor",
-    },
-    servers: [
-      {
-        url: "http://localhost:3333",
-        description: "Ambiente de desenvolvimento",
-      },
-    ],
-  },
-  apis: ["./src/modules/**/*.routes.ts"],
-};
+import { authContracts } from "@/modules/auth/auth.contract.js";
+import { generateSwaggerSpec } from "./routeRegistry.js";
 
-export const swaggerSpec = swaggerJsdoc(options);
+// ─── Gera spec OpenAPI a partir dos contracts explicitamente ──────────────
+export const swaggerSpec = generateSwaggerSpec(authContracts, {
+  title: "Kanban API",
+  version: "1.0.0",
+  description: "API do Sistema Kanban Assessor — Documentação gerada automaticamente via contracts",
+  basePath: "/auth",
+  servers: [{ url: "/", description: "Base API" }],
+  tags: [{ name: "Auth", description: "Endpoints de autenticação e gestão de sessão" }],
+});
