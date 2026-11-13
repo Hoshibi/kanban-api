@@ -27,3 +27,8 @@ export type Advisor = Prisma.AdvisorModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model KanbanStage
+ * 
+ */
+export type KanbanStage = Prisma.KanbanStageModel

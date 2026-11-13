@@ -398,7 +398,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Advisor: 'Advisor',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  KanbanStage: 'KanbanStage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "advisor" | "refreshToken"
+    modelProps: "advisor" | "refreshToken" | "kanbanStage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -566,6 +567,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    KanbanStage: {
+      payload: Prisma.$KanbanStagePayload<ExtArgs>
+      fields: Prisma.KanbanStageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KanbanStageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KanbanStageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        findFirst: {
+          args: Prisma.KanbanStageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KanbanStageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        findMany: {
+          args: Prisma.KanbanStageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>[]
+        }
+        create: {
+          args: Prisma.KanbanStageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        createMany: {
+          args: Prisma.KanbanStageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KanbanStageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>[]
+        }
+        delete: {
+          args: Prisma.KanbanStageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        update: {
+          args: Prisma.KanbanStageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        deleteMany: {
+          args: Prisma.KanbanStageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KanbanStageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KanbanStageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>[]
+        }
+        upsert: {
+          args: Prisma.KanbanStageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KanbanStagePayload>
+        }
+        aggregate: {
+          args: Prisma.KanbanStageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKanbanStage>
+        }
+        groupBy: {
+          args: Prisma.KanbanStageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KanbanStageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KanbanStageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KanbanStageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -631,6 +706,21 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const KanbanStageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  position: 'position',
+  colorBorder: 'colorBorder',
+  colorAccent: 'colorAccent',
+  badgeBg: 'badgeBg',
+  createdAt: 'createdAt'
+} as const
+
+export type KanbanStageScalarFieldEnum = (typeof KanbanStageScalarFieldEnum)[keyof typeof KanbanStageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -885,6 +975,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   advisor?: Prisma.AdvisorOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  kanbanStage?: Prisma.KanbanStageOmit
 }
 
 /* Types for Logging */

@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Advisor: 'Advisor',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  KanbanStage: 'KanbanStage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -97,6 +98,21 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const KanbanStageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  position: 'position',
+  colorBorder: 'colorBorder',
+  colorAccent: 'colorAccent',
+  badgeBg: 'badgeBg',
+  createdAt: 'createdAt'
+} as const
+
+export type KanbanStageScalarFieldEnum = (typeof KanbanStageScalarFieldEnum)[keyof typeof KanbanStageScalarFieldEnum]
 
 
 export const SortOrder = {

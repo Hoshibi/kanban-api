@@ -10,4 +10,5 @@
  */
 export type * from './models/Advisor.ts'
 export type * from './models/RefreshToken.ts'
+export type * from './models/KanbanStage.ts'
 export type * from './commonInputTypes.ts'

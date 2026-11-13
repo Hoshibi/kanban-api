@@ -45,3 +45,18 @@ model RefreshToken {
   @@index([expiresAt])
   @@map("refresh_tokens")
 }
+
+model KanbanStage {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique @db.VarChar(50)
+  title       String   @db.VarChar(100)
+  description String?  @db.Text
+  position    Int      @unique
+  colorBorder String?  @map("color_border") @db.VarChar(50)
+  colorAccent String?  @map("color_accent") @db.VarChar(50)
+  badgeBg     String?  @map("badge_bg") @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@map("kanban_stages")
+}
