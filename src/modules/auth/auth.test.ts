@@ -44,7 +44,7 @@ const createTestApp = () => {
   const app = express();
   app.use(express.json());
   app.use(cookieParser());
-  app.use("/auth", authRoutes);
+  app.use(authRoutes);
   app.use(errorHandler); // Importante: error handler por último
   return app;
 };

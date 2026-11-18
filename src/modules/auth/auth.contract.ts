@@ -29,7 +29,7 @@ export const authContracts = [
   // POST /auth/register
   createRoute({
     method: "post",
-    path: "/register",
+    path: "/auth/register",
     summary: "Registra novo advisor",
     tags: ["Auth"],
     security: security.none,
@@ -48,7 +48,7 @@ export const authContracts = [
   // POST /auth/login
   createRoute({
     method: "post",
-    path: "/login",
+    path: "/auth/login",
     summary: "Login — retorna access token + seta refresh token em cookie HttpOnly",
     tags: ["Auth"],
     security: security.none,
@@ -67,7 +67,7 @@ export const authContracts = [
   // POST /auth/refresh
   createRoute({
     method: "post",
-    path: "/refresh",
+    path: "/auth/refresh",
     summary: "Renova access token (rotação de refresh token)",
     description: "Lê refresh token do cookie HttpOnly, revoga o atual e emite novo par.",
     tags: ["Auth"],
@@ -101,7 +101,7 @@ export const authContracts = [
   // POST /auth/logout
   createRoute({
     method: "post",
-    path: "/logout",
+    path: "/auth/logout",
     summary: "Logout — revoga refresh token (se existir) e limpa cookie",
     tags: ["Auth"],
     security: security.cookie,
@@ -115,7 +115,7 @@ export const authContracts = [
   // GET /auth/me
   createRoute({
     method: "get",
-    path: "/me",
+    path: "/auth/me",
     summary: "Retorna dados do advisor autenticado",
     tags: ["Auth"],
     security: security.bearer,
