@@ -10,6 +10,7 @@ import { corsOrigins } from "./config/env.ts";
 import { rateLimiters } from "./config/rateLimit.ts";
 import { swaggerSpec } from "./config/swagger.ts";
 import { authRoutes } from "./modules/auth/auth.routes.ts";
+import { kanbanRoutes } from "./modules/kanban/kanban.routes.ts";
 import { errorHandler } from "./shared/middleware/errorHandler.ts";
 import { requestLogger } from "./shared/middleware/requestLogger.ts";
 
@@ -69,7 +70,8 @@ app.get("/health", (_req, res) => {
 });
 
 // ── Rotas ────────────────────────────────────────────────────────────────────────
-app.use("/auth", authRoutes);
+app.use(authRoutes);
+app.use(kanbanRoutes);
 // Futuro: app.use("/api/v1", apiRoutes);  // versionamento quando crescer
 
 // ── 404 explícito ────────────────────────────────────────────────────────────────
